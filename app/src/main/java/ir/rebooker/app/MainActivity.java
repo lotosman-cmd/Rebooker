@@ -2,7 +2,6 @@ package ir.rebooker.app;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.webkit.SafeBrowsingResponse;
 import android.webkit.SslErrorHandler;
 import android.net.http.SslError;
 import android.webkit.WebChromeClient;
@@ -94,10 +93,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-        if (web != null) {
-            web.onPause();
-            web.evaluateJavascript("try{localStorage.setItem('rebooker_last_saved',String(Date.now()))}catch(e){}", null);
-        }
+        if (web != null) web.onPause();
         super.onPause();
     }
 
