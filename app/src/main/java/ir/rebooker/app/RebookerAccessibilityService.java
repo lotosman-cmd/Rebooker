@@ -109,8 +109,6 @@ public class RebookerAccessibilityService extends AccessibilityService {
 
     public static boolean startCapture() {
         if (instance == null || instance.replaying) return false;
-        instance.captured.put(new JSONObject());
-        instance.captured.remove(instance.captured.length() - 1);
         while (instance.captured.length() > 0) instance.captured.remove(0);
         instance.recording = true;
         instance.showRecordingNotification();
@@ -211,7 +209,7 @@ public class RebookerAccessibilityService extends AccessibilityService {
         String desc = safe(root.getContentDescription());
         String hint = hintOf(root);
         boolean match = !wantedId.isEmpty() && wantedId.equals(id);
-        if (!match && wantedId.isEmpty()) {
+        if (!match) {
             boolean classMatch = wantedClass.isEmpty() || wantedClass.equals(cls);
             boolean semanticMatch = (!wantedDesc.isEmpty() && wantedDesc.equals(desc)) ||
                                     (!wantedHint.isEmpty() && wantedHint.equals(hint)) ||
