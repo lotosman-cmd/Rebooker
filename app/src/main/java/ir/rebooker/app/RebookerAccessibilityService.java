@@ -40,7 +40,7 @@ public class RebookerAccessibilityService extends AccessibilityService {
         super.onServiceConnected();
         instance = this;
         AccessibilityServiceInfo info = getServiceInfo();
-        info.eventTypes = AccessibilityEvent.TYPE_VIEW_CLICKED | AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED;
+        info.eventTypes = AccessibilityEvent.TYPE_VIEW_CLICKED | AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED | AccessibilityEvent.TYPE_VIEW_SELECTED;
         info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
         info.flags |= AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS | AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS;
         info.notificationTimeout = 80;
@@ -51,7 +51,7 @@ public class RebookerAccessibilityService extends AccessibilityService {
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (!recording || event == null || event.getPackageName() == null) return;
         int type = event.getEventType();
-        if (type != AccessibilityEvent.TYPE_VIEW_CLICKED && type != AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED) return;
+        if (type != AccessibilityEvent.TYPE_VIEW_CLICKED && type != AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED && type != AccessibilityEvent.TYPE_VIEW_SELECTED) return;
         String pkg = event.getPackageName().toString();
         if (pkg.equals(getPackageName()) || isSystemOrKeyboard(pkg)) return;
         AccessibilityNodeInfo node = event.getSource();
@@ -92,7 +92,7 @@ public class RebookerAccessibilityService extends AccessibilityService {
     private boolean isSensitive(AccessibilityNodeInfo node) {
         if (node.isPassword()) return true;
         String marker = (safe(node.getContentDescription()) + " " + hintOf(node) + " " + safe(node.getText())).toLowerCase(Locale.ROOT);
-        String[] blocked = {"password", "passcode", "one-time", "otp", "cvv", "cvc", "pin code", "رمز عبور", "گذرواژه", "رمز پویا", "کد تایید", "کد تأیید", "رمز یکبار", "شماره کارت", "cvv2", "شناسایی بانکی"};
+        String[] blocked = {"password", "passcode", "one-time", "otp", "cvv", "cvc", "pin code", "رمز عبور", "گذرواژه", "رمز پویا", "کد تایید", "کد تأیید", "رمز یکبار", "شماره کارت", "cvv2", "شناسایی بانکی", "card number", "credit card", "debit card", "account number", "security code", "verification code", "شماره حساب", "کارت بانکی", "کد امنیتی", "کد یکبار مصرف"};
         for (String word : blocked) if (marker.contains(word)) return true;
         return false;
     }
@@ -192,7 +192,7 @@ public class RebookerAccessibilityService extends AccessibilityService {
     }
 
     private boolean isFinalAction(String label) {
-        String[] blocked = {"ثبت نهایی", "پرداخت", "خرید", "ارسال", "حذف", "تأیید نهایی", "تایید نهایی", "submit", "pay", "purchase", "delete", "place order"};
+        String[] blocked = {"ثبت", "تأیید", "تایید", "پرداخت", "خرید", "ارسال", "حذف", "submit", "send", "confirm", "pay", "purchase", "delete", "place order", "finish", "complete"};
         for (String word : blocked) if (label.contains(word)) return true;
         return false;
     }
